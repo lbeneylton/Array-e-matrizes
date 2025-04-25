@@ -82,20 +82,38 @@ void imprimir_tabuleiro()
     }
     linhas();
 }
-// Função para colocar navio na horizontal, passando como argumento a casa mais a esquerda
-void colocar_navio_HORIZONTAL(char navio[], int tamanho, int lin, int col)
+// Função para colocar navio passando como argumento a casa mais a esquerda e mais em cima
+void colocar_navio(char navio[], int tamanho, int lin, int col, char direcao)
 {
-    // Verifica se o navio cabe horizontalmente no tabuleiro
-    if (col + tamanho > COLUNAS_TABULEIRO)
+    int dx, dy;
+
+    switch (direcao)
     {
-        printf("\nO navio não pode ser colocado nessa orientação (horizontal) nessa posição\n\nFora dos Limites\n");
-        return;
+    case 'H':
+        dx = 1;
+        dy = 0;
+        break;
+
+    case 'V':
+        dx = 0;
+        dy = 1;
+        break;
     }
 
-    // Verifica se o espaço está livre
     for (int i = 0; i < tamanho; i++)
     {
-        if (tabuleiro[lin][col + i] != '0')
+        int nova_linha = lin + i * dy;
+        int nova_coluna = col + i * dx;
+
+        // Verifica se o navio cabe na horizontal e na vertical no tabuleiro
+        if (nova_linha >= LINHAS_TABULEIRO || nova_coluna >= COLUNAS_TABULEIRO)
+        {
+            printf("\nO navio não pode ser colocado nessa orientação (horizontal) nessa posição\n\nFora dos Limites\n");
+            return;
+        }
+
+        // Verifica se o espaço está livre
+        if (tabuleiro[nova_linha][nova_coluna] != '0')
         {
             printf("\nEspaço ocupado por outro navio\n");
             return;
@@ -105,42 +123,21 @@ void colocar_navio_HORIZONTAL(char navio[], int tamanho, int lin, int col)
     // Coloca o navio no tabuleiro
     for (int i = 0; i < tamanho; i++)
     {
-        tabuleiro[lin][col + i] = navio[i];
-    }
-}
-
-// Função para colocar navio na vertical, passando como argumento a casa mais em cima
-void colocar_navio_VERTICAL(char navio[], int tamanho, int lin, int col)
-{
-    // Verifica se o navio cabe verticalmente no tabuleiro
-    if (lin + tamanho > LINHAS_TABULEIRO)
-    {
-        printf("\nO navio não pode ser colocado nessa orientação (vertical), nessa posição\n\nFora dos Limites.\n");
-        return;
-    }
-
-    // Verifica se o espaço está livre
-    for (int i = 0; i < tamanho; i++)
-    {
-        if (tabuleiro[lin + i][col] != '0')
-        {
-            printf("\nEspaço ocupado por outro navio\n");
-            return;
-        }
-    }
-
-    // Coloca o navio no tabuleiro
-    for (int i = 0; i < tamanho; i++)
-    {
-        tabuleiro[lin + i][col] = navio[i];
+        int nova_linha = lin + i * dy;
+        int nova_coluna = col + i * dx;
+        tabuleiro[nova_linha][nova_coluna] = navio[i];
     }
 }
 
 // Função para colocar navio na diagonal
-void colocar_navio_DIAGONAL_1(char navio[], int tamanho, int lin, int col)
+void colocar_navio_DIAGONAL(char navio[], int tamanho, int lin, int col, int direcao) // direção será 1 para crescente e - 1 para decrescente
+                                                                                      //   crescente              decrescente
+                                                                                      //  #                                   #
+                                                                                      //       #                        #
+                                                                                      //             #            #
 {
     // Verifica se o navio cabe na diagonal do tabuleiro
-    if (lin + tamanho > LINHAS_TABULEIRO || col + tamanho > COLUNAS_TABULEIRO)
+    if (lin + tamanho > LINHAS_TABULEIRO || col + tamanho > COLUNAS_TABULEIRO || col - tamanho < 0)
     {
         printf("\n O navio não pode ser colocado nessa orientação nesssa posição\nFora dos Limites\n");
         return;
@@ -149,7 +146,7 @@ void colocar_navio_DIAGONAL_1(char navio[], int tamanho, int lin, int col)
     // Verifica se o espaço está livre
     for (int i = 0; i < tamanho; i++)
     {
-        if (tabuleiro[lin + i][col + i] != '0')
+        if (tabuleiro[lin + i][col + i * direcao] != '0')
         {
             printf("\nEspaço ocupado por outro navio\n");
             return;
@@ -158,32 +155,7 @@ void colocar_navio_DIAGONAL_1(char navio[], int tamanho, int lin, int col)
 
     for (int i = 0; i < tamanho; i++)
     {
-        tabuleiro[lin + i][col + i] = navio[i];
-    }
-}
-
-void colocar_navio_DIAGONAL_2(char navio[], int tamanho, int lin, int col)
-{
-    // Verifica se o navio cabe na diagonal do tabuleiro
-    if (lin + tamanho > LINHAS_TABULEIRO || col - tamanho < 0)
-    {
-        printf("\n O navio não pode ser colocado nessa orientação nesssa posição\nFora dos Limites\n");
-        return;
-    }
-
-    // Verifica se o espaço está livre
-    for (int i = 0; i < tamanho; i++)
-    {
-        if (tabuleiro[lin + i][col - i] != '0')
-        {
-            printf("\nEspaço ocupado por outro navio\n");
-            return;
-        }
-    }
-
-    for (int i = 0; i < tamanho; i++)
-    {
-        tabuleiro[lin + i][col - i] = navio[i];
+        tabuleiro[lin + i][col + i * direcao] = navio[i];
     }
 }
 
@@ -194,8 +166,8 @@ int main()
     colocar_navio_HORIZONTAL(navio1, TAMANHO_NAVIOS, linha_navio1, coluna_navio1);
     colocar_navio_HORIZONTAL(navio2, TAMANHO_NAVIOS, linha_navio2, coluna_navio2);
 
-    colocar_navio_DIAGONAL_1(navio3, TAMANHO_NAVIOS, linha_navio3, coluna_navio3);
-    colocar_navio_DIAGONAL_2(navio4, TAMANHO_NAVIOS, linha_navio4, coluna_navio4);
+    colocar_navio_DIAGONAL(navio3, TAMANHO_NAVIOS, linha_navio3, coluna_navio3, 1);
+    colocar_navio_DIAGONAL(navio4, TAMANHO_NAVIOS, linha_navio4, coluna_navio4, -1);
 
     imprimir_tabuleiro();
 }
