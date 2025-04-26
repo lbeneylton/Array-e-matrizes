@@ -1,20 +1,45 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define LINHAS_TABULEIRO 10
+#define LINHAS_TABULEIRO 10 // Dados para criação do tabuleiro
 #define COLUNAS_TABULEIRO 10
 #define ESPACO "                                                                     "
-#define TAMANHO_NAVIOS 3
+#define AGUA 0
+#define PARTE_NAVIO 3
+#define ATINGIDO 5
+
+#define LINHAS_HABILIDADE 3 // Dados para criação das habilidades
+#define COLUNAS_HABILIDADE 5
+
+#define TAMANHO_NAVIOS 3 // Dados para criação dos navios
+#define NAVIOS 4
 
 char tabuleiro[LINHAS_TABULEIRO][COLUNAS_TABULEIRO];
 
-char navio1[TAMANHO_NAVIOS] = {'1', '1', '1'};
-char navio2[TAMANHO_NAVIOS] = {'2', '2', '2'};
+// Habilidades
+int cone[3][5] = {
+    {0, 0, 1, 0, 0},
+    {0, 1, 1, 1, 0},
+    {1, 1, 1, 1, 1}};
 
-char navio3[TAMANHO_NAVIOS] = {'3', '3', '3'};
-char navio4[TAMANHO_NAVIOS] = {'4', '4', '4'};
+int cruz[3][5] = {
+    {0, 0, 1, 0, 0},
+    {1, 1, 1, 1, 1},
+    {0, 0, 1, 0, 0}};
 
-// char navios[NAVIOS][TAMANHO_NAVIOS];
+int octa[3][5] = {
+    {0, 0, 1, 0, 0},
+    {0, 1, 1, 1, 0},
+    {0, 0, 1, 0, 0}};
+
+// navios guardados em linha na ma
+int navios[NAVIOS][TAMANHO_NAVIOS] = {
+    {3, 3, 3},
+    {3, 3, 3},
+    {3, 3, 3},
+    {3, 3, 3}
+
+};
 
 int linha_navio1 = 1;
 int coluna_navio1 = 5;
@@ -52,7 +77,7 @@ void criar_tabuleiro()
     {
         for (int j = 0; j < COLUNAS_TABULEIRO; j++)
         {
-            tabuleiro[i][j] = '0';
+            tabuleiro[i][j] = AGUA;
         }
     }
 }
@@ -80,19 +105,18 @@ void imprimir_tabuleiro()
 
         for (int j = 0; j < COLUNAS_TABULEIRO; j++)
         {
-            printf(" %c |", tabuleiro[i][j]);
+            printf(" %d |", tabuleiro[i][j]);
         }
     }
     linhas();
 }
 
-// Função para colocar navio passando como argumento a casa mais a esquerda e mais em cima
+// Função para colocar navio, passando como argumento a casa mais a esquerda e mais em cima
 // H = HORIZONTAL
 // V = VERTICAL
 // D = DIAGONAL
 // I = DIAGONAL INVERTIDA
-
-void colocar_navio(char navio[], int tamanho, int lin, int col, char direcao)
+void colocar_navio(int navio[], int tamanho, int lin, int col, char direcao)
 {
     int dx = 0, dy = 0; // Variações na linha e na coluna respectivamente
 
@@ -136,7 +160,7 @@ void colocar_navio(char navio[], int tamanho, int lin, int col, char direcao)
         }
 
         // Verifica se o espaço está livre
-        if (tabuleiro[nova_linha][nova_coluna] != '0')
+        if (tabuleiro[nova_linha][nova_coluna] != 0)
         {
             printf("\nEspaço ocupado por outro navio\n");
             return;
@@ -152,15 +176,30 @@ void colocar_navio(char navio[], int tamanho, int lin, int col, char direcao)
     }
 }
 
+void habilidade_cone(int y, int x)
+{
+    for (int i = 0; i < LINHAS_HABILIDADE; i++)
+    {
+        for (int j = 0; j < COLUNAS_HABILIDADE; j++)
+        {
+            if (tabuleiro[i + y][j + x - 2] != 0 && cone[i][j] == 1) // -2 para alinhar o topo do cone no ponto de origem
+            {
+                tabuleiro[i + y][j + x - 2] = ATINGIDO;
+            }
+        }
+    }
+}
+
 int main()
 {
     criar_tabuleiro();
 
-    colocar_navio(navio1, TAMANHO_NAVIOS, linha_navio1, coluna_navio1, 'h');
-    colocar_navio(navio2, TAMANHO_NAVIOS, linha_navio2, coluna_navio2, 'H');
+    colocar_navio(navios[0], TAMANHO_NAVIOS, linha_navio1, coluna_navio1, 'h');
+    colocar_navio(navios[1], TAMANHO_NAVIOS, linha_navio2, coluna_navio2, 'H');
 
-    colocar_navio(navio3, TAMANHO_NAVIOS, linha_navio3, coluna_navio3, 'D');
-    colocar_navio(navio4, TAMANHO_NAVIOS, linha_navio4, coluna_navio4, 'I');
+    colocar_navio(navios[2], TAMANHO_NAVIOS, linha_navio3, coluna_navio3, 'D');
+    colocar_navio(navios[3], TAMANHO_NAVIOS, linha_navio4, coluna_navio4, 'I');
+    habilidade_cone(1, 5);
 
     imprimir_tabuleiro();
 }

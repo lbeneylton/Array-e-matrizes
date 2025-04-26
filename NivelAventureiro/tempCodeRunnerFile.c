@@ -4,6 +4,7 @@
 #define LINHAS_TABULEIRO 10
 #define COLUNAS_TABULEIRO 10
 #define ESPACO "                                                                     "
+#define NAVIOS 4
 #define TAMANHO_NAVIOS 3
 
 char tabuleiro[LINHAS_TABULEIRO][COLUNAS_TABULEIRO];
