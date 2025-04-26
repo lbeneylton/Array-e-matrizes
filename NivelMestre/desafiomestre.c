@@ -4,9 +4,10 @@
 #define LINHAS_TABULEIRO 10 // Dados para criação do tabuleiro
 #define COLUNAS_TABULEIRO 10
 #define ESPACO "                                                                     "
-#define AGUA 0
-#define PARTE_NAVIO 3
-#define ATINGIDO 5
+
+#define AGUA '0'
+#define PARTE_NAVIO '3'
+#define ATINGIDO '5'
 
 #define LINHAS_HABILIDADE 3 // Dados para criação das habilidades
 #define COLUNAS_HABILIDADE 5
@@ -33,13 +34,7 @@ int octa[3][5] = {
     {0, 0, 1, 0, 0}};
 
 // navios guardados em linha na ma
-int navios[NAVIOS][TAMANHO_NAVIOS] = {
-    {3, 3, 3},
-    {3, 3, 3},
-    {3, 3, 3},
-    {3, 3, 3}
-
-};
+char navios[NAVIOS][TAMANHO_NAVIOS];
 
 int linha_navio1 = 1;
 int coluna_navio1 = 5;
@@ -82,6 +77,18 @@ void criar_tabuleiro()
     }
 }
 
+// Função para criar qt navios
+void criar_navios()
+{
+    for (int i = 0; i < NAVIOS; i++)
+    {
+        for (int j = 0; j < TAMANHO_NAVIOS; j++)
+        {
+            navios[i][j] = PARTE_NAVIO;
+        }
+    }
+}
+
 // Função responsável pela impressão do tabuleiro
 void imprimir_tabuleiro()
 {
@@ -105,7 +112,7 @@ void imprimir_tabuleiro()
 
         for (int j = 0; j < COLUNAS_TABULEIRO; j++)
         {
-            printf(" %d |", tabuleiro[i][j]);
+            printf(" %c |", tabuleiro[i][j]);
         }
     }
     linhas();
@@ -116,7 +123,7 @@ void imprimir_tabuleiro()
 // V = VERTICAL
 // D = DIAGONAL
 // I = DIAGONAL INVERTIDA
-void colocar_navio(int navio[], int tamanho, int lin, int col, char direcao)
+void colocar_navio(char navio[], int tamanho, int lin, int col, char direcao)
 {
     int dx = 0, dy = 0; // Variações na linha e na coluna respectivamente
 
@@ -160,7 +167,7 @@ void colocar_navio(int navio[], int tamanho, int lin, int col, char direcao)
         }
 
         // Verifica se o espaço está livre
-        if (tabuleiro[nova_linha][nova_coluna] != 0)
+        if (tabuleiro[nova_linha][nova_coluna] != AGUA)
         {
             printf("\nEspaço ocupado por outro navio\n");
             return;
@@ -192,6 +199,7 @@ void habilidade_cone(int y, int x)
 
 int main()
 {
+    criar_navios(3);
     criar_tabuleiro();
 
     colocar_navio(navios[0], TAMANHO_NAVIOS, linha_navio1, coluna_navio1, 'h');
@@ -199,7 +207,7 @@ int main()
 
     colocar_navio(navios[2], TAMANHO_NAVIOS, linha_navio3, coluna_navio3, 'D');
     colocar_navio(navios[3], TAMANHO_NAVIOS, linha_navio4, coluna_navio4, 'I');
-    habilidade_cone(1, 5);
+    // habilidade_cone(1, 5);
 
     imprimir_tabuleiro();
 }
