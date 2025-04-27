@@ -174,19 +174,20 @@ void colocar_navio(char navio[], int pos[], char direcao)
         break;
     }
 
+    // Verifica se as células estão livres antes de colocar o navio
     for (int i = 0; i < TAMANHO_NAVIOS; i++)
     {
         int nova_linha = lin + i * dy;
         int nova_coluna = col + i * dx;
 
-        // Verifica se a posição do navio está dentro dos limites e se o espaço está livre
-        if (nova_linha >= LINHAS_TABULEIRO || nova_coluna >= COLUNAS_TABULEIRO || nova_linha < 0 || nova_coluna < 0) // Verifica se a posição está dentro do tabuleiro
+        // Verifica se a posição está dentro do tabuleiro
+        if (nova_linha >= LINHAS_TABULEIRO || nova_coluna >= COLUNAS_TABULEIRO || nova_linha < 0 || nova_coluna < 0)
         {
             printf("\nO navio não pode ser colocado nessa posição\n\nFora dos Limites\n");
             return;
         }
 
-        // Verifica se o espaço está livre
+        // Verifica se a célula está ocupada por outro navio
         if (tabuleiro[nova_linha][nova_coluna] != AGUA)
         {
             printf("\nEspaço ocupado por outro navio\n");
